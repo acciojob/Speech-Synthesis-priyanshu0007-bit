@@ -56,20 +56,14 @@
     const speakButton = document.querySelector('#speak');
     const stopButton = document.querySelector('#stop');
 
-    // Initial speech settings
     msg.rate = Number(rate.value);
     msg.pitch = Number(pitch.value);
     msg.text = text.value;
 
-
-    // Populate available voices
     function populateVoices() {
       voices = speechSynthesis.getVoices();
 
-      // Handle case where no voices are available
       if (voices.length === 0) {
-        voicesDropdown.innerHTML =
-          '<option value="">No voices available</option>';
         return;
       }
 
@@ -80,15 +74,12 @@
         const option = document.createElement('option');
 
         option.value = voice.name;
-        option.textContent =
-          voice.name + ' (' + voice.lang + ')';
+        option.textContent = voice.name + ' (' + voice.lang + ')';
 
         voicesDropdown.appendChild(option);
       });
     }
 
-
-    // Set selected voice
     function setVoice() {
       const selectedVoice = voices.find(function(voice) {
         return voice.name === voicesDropdown.value;
@@ -97,7 +88,6 @@
       if (selectedVoice) {
         msg.voice = selectedVoice;
 
-        // Restart speech if voice is changed during speech
         if (speechSynthesis.speaking) {
           speechSynthesis.cancel();
 
@@ -108,36 +98,25 @@
       }
     }
 
-
-    // Update rate
     function setRate() {
       msg.rate = Number(rate.value);
     }
 
-
-    // Update pitch
+    
     function setPitch() {
       msg.pitch = Number(pitch.value);
     }
 
-
-    // Update text
+    
     function setText() {
       msg.text = text.value;
     }
 
-
-    // Speak
+    
     function speak() {
-      const enteredText = text.value;
+      const enteredText = text.value.trim();
 
-      // Prevent empty input
       if (enteredText === '') {
-        return;
-      }
-
-      // Prevent whitespace-only input
-      if (enteredText.trim() === '') {
         return;
       }
 
@@ -157,55 +136,29 @@
       speechSynthesis.speak(msg);
     }
 
-
-    // Stop speech
     function stop() {
       speechSynthesis.cancel();
     }
 
-
-    // Try to populate voices immediately
     populateVoices();
 
-
-    // Populate voices when browser finishes loading them
     speechSynthesis.addEventListener(
       'voiceschanged',
       populateVoices
     );
 
 
-    // Event listeners
-    voicesDropdown.addEventListener(
-      'change',
-      setVoice
-    );
+    voicesDropdown.addEventListener('change', setVoice);
 
-    rate.addEventListener(
-      'input',
-      setRate
-    );
+    rate.addEventListener('input', setRate);
 
-    pitch.addEventListener(
-      'input',
-      setPitch
-    );
+    pitch.addEventListener('input', setPitch);
 
-    text.addEventListener(
-      'input',
-      setText
-    );
+    text.addEventListener('input', setText);
 
-    speakButton.addEventListener(
-      'click',
-      speak
-    );
+    speakButton.addEventListener('click', speak);
 
-    stopButton.addEventListener(
-      'click',
-      stop
-    );
-
+    stopButton.addEventListener('click', stop);
   </script>
 
 </body>
