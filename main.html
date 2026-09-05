@@ -21,7 +21,7 @@
 
       <label for="pitch">Pitch:</label>
 
-      <input name="pitch" type="range" min="0" max="2" step="0.1">
+      <input name="pitch" type="range" min="0" max="2" value="1" step="0.1">
       <textarea name="text">Hello! I love JavaScript 👍</textarea>
       <button id="stop">Stop!</button>
       <button id="speak">Speak</button>
@@ -30,70 +30,93 @@
 
 ```html
 <script>
-  const msg = new SpeechSynthesisUtterance();
-  let voices = [];
+  
+const msg = new SpeechSynthesisUtterance();
+let voices = [];
 
-  const voicesDropdown = document.querySelector('[name="voice"]');
-  const options = document.querySelectorAll('[type="range"], [name="text"]');
-  const speakButton = document.querySelector('#speak');
-  const stopButton = document.querySelector('#stop');
+const voicesDropdown = document.querySelector('[name="voice"]');
+const options = document.querySelectorAll('[type="range"], [name="text"]');
+const speakButton = document.querySelector('#speak');
+const stopButton = document.querySelector('#stop');
 
-  function populateVoices() {
-    voices = speechSynthesis.getVoices();
+msg.rate = 1;
+msg.pitch = 1;
 
-    voicesDropdown.innerHTML = '<option value="">Select A Voice</option>';
+function populateVoices() {
+  voices = speechSynthesis.getVoices();
 
-    voices.forEach(voice => {
-      const option = document.createElement('option');
+  voicesDropdown.innerHTML = '<option value="">Select A Voice</option>';
 
-      option.value = voice.name;
-      option.textContent = `${voice.name} (${voice.lang})`;
+  voices.forEach(voice => {
+    const option = document.createElement('option');
 
-      voicesDropdown.appendChild(option);
-    });
-  }
+    option.value = voice.name;
+    option.textContent = `${voice.name} (${voice.lang})`;
 
-  function setVoice() {
-    msg.voice = voices.find(voice => voice.name === this.value);
-  }
-
-  function setOption() {
-    if(this.name=='rate'){
-		msg.rate = Number(this.value);
-	}
-	if(this.name = 'pitch'){
-		msg.pitch = Number(this.value);
-	}
-	if(this.name = 'text'){
-		msg.text = this.value;
-	}
-  }
-
-  function speak() {
-    if (!msg.text.trim()) {
-      speechSynthesis.cancel();
-      return;
-    }
-
-    speechSynthesis.cancel();
-    speechSynthesis.speak(msg);
-  }
-
-  function stop() {
-    speechSynthesis.cancel();
-  }
-
-  speechSynthesis.addEventListener('voiceschanged', populateVoices);
-  populateVoices();
-
-  voicesDropdown.addEventListener('change', setVoice);
-
-  options.forEach(option => {
-    option.addEventListener('input', setOption);
+    voicesDropdown.appendChild(option);
   });
+}
 
-  speakButton.addEventListener('click', speak);
-  stopButton.addEventListener('click', stop);
+function setVoice() {
+  const selectedVoice = voices.find(
+    voice => voice.name === this.value
+  );
+
+  if (selectedVoice) {
+    msg.voice = selectedVoice;
+
+    if (speechSynthesis.speaking) {
+      speechSynthesis.cancel();
+
+      setTimeout(() => {
+        speechSynthesis.speak(msg);
+      }, 50);
+    }
+  }
+}
+
+function setOption() {
+  if (this.name === 'rate') {
+    msg.rate = Number(this.value);
+  }
+
+  if (this.name === 'pitch') {
+    msg.pitch = Number(this.value);
+  }
+
+  if (this.name === 'text') {
+    msg.text = this.value;
+  }
+}
+
+function speak() {
+  if (!msg.text || !msg.text.trim()) {
+    speechSynthesis.cancel();
+    return;
+  }
+
+  speechSynthesis.cancel();
+
+  speechSynthesis.speak(msg);
+}
+
+function stop() {
+  speechSynthesis.cancel();
+}
+
+speechSynthesis.addEventListener('voiceschanged', populateVoices);
+
+populateVoices();
+
+voicesDropdown.addEventListener('change', setVoice);
+
+options.forEach(option => {
+  option.addEventListener('input', setOption);
+});
+
+
+speakButton.addEventListener('click', speak);
+stopButton.addEventListener('click', stop);
 </script>
 ```
 
