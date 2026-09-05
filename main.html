@@ -58,7 +58,15 @@
   }
 
   function setOption() {
-    msg[this.name] = this.value;
+    if(this.name=='rate'){
+		msg.rate = Number(this.value);
+	}
+	if(this.name = 'pitch'){
+		msg.pitch = Number(this.value);
+	}
+	if(this.name = 'text'){
+		msg.text = this.value;
+	}
   }
 
   function speak() {
